@@ -42,7 +42,7 @@ avg_steps <- as.data.frame(avg_steps)
 
 
 avg_steps <- avg_steps %>% rownames_to_column(var = "Interval")
-plot(avg_steps$Interval, avg_steps$avg_steps, type = "l", main = "Average_daily_activity_pattern")
+plot(avg_steps$Interval, avg_steps$avg_steps, type = "l", main = "Averagy daily activity pattern")
 ```
 
 
@@ -112,3 +112,7 @@ week_average$Average_steps <- as.integer(week_average$Average_steps)
 ```{r week comparison plots}
 xyplot(Average_steps~Interval|Week, type="l", data=week_average, layout = c(1,2), main = "Average steps per interval by day type")
 ```
+install.packages(“knitr”)
+library(“knitr”)
+knit2html("/Users/masamiyamaguchi/Documents/GitHub/RepData_PeerAssessment1/PA1_template.Rmd", spin(knit = FALSE), force_v1 = TRUE)
+
