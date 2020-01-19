@@ -5,6 +5,9 @@ output:
     keep_md: true
 ---
 
+```r
+knitr::opts_chunk$set(fig.path='Figs/')
+```
 
 ## Loading and preprocessing the data
 
@@ -32,20 +35,6 @@ library(dplyr)
 ```r
 library(datasets)
 library(ggplot2)
-```
-
-```
-## 
-## Attaching package: 'ggplot2'
-```
-
-```
-## The following object is masked _by_ '.GlobalEnv':
-## 
-##     diamonds
-```
-
-```r
 library(tibble)
 library(lattice)
 
@@ -95,7 +84,7 @@ steps_per_day <- tapply(activity$steps,activity$date, FUN=sum, rm.na = TRUE)
 hist(steps_per_day, main = "Total number of steps taken per day and frequency", xlab = "Total steps by day")
 ```
 
-![plot of chunk mean total and histogram](figure/mean total and histogram-1.png)
+![](Figs/mean total and histogram-1.png)<!-- -->
 
 ```r
 steps_mean <- mean(steps_per_day, na.rm = TRUE)
@@ -126,7 +115,7 @@ avg_steps <- avg_steps %>% rownames_to_column(var = "Interval")
 plot(avg_steps$Interval, avg_steps$avg_steps, type = "l", main = "Averagy daily activity pattern")
 ```
 
-![plot of chunk average daily activity](figure/average daily activity-1.png)
+![](Figs/average daily activity-1.png)<!-- -->
 
 
 ## Imputing missing values
@@ -161,7 +150,7 @@ hist(steps_per_day, xlab = "Total steps by day", col = "Grey", add = T)
 legend("topright", c("Imputed Data", "Non-NA Data"), fill=c("grey", "blue") )
 ```
 
-![plot of chunk histogram and new mean/average](figure/histogram and new mean/average-1.png)
+![](Figs/histogram and new mean/average-1.png)<!-- -->
 
 ```r
 steps_mean <- mean(new_steps_per_day, na.rm = TRUE)
@@ -223,4 +212,4 @@ week_average$Average_steps <- as.integer(week_average$Average_steps)
 xyplot(Average_steps~Interval|Week, type="l", data=week_average, layout = c(1,2), main = "Average steps per interval by day type")
 ```
 
-![plot of chunk week comparison plots](figure/week comparison plots-1.png)
+![](Figs/week comparison plots-1.png)<!-- -->
