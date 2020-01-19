@@ -112,7 +112,7 @@ avg_steps <- as.data.frame(avg_steps)
 
 
 avg_steps <- avg_steps %>% rownames_to_column(var = "Interval")
-plot(avg_steps$Interval, avg_steps$avg_steps, type = "l", main = "Averagy daily activity pattern")
+plot(avg_steps$Interval, avg_steps$avg_steps, type = "l", main = "Averag_daily_activity_pattern")
 ```
 
 ![](Figs/average daily activity-1.png)<!-- -->
