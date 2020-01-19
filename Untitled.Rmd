@@ -1,0 +1,152 @@
+---
+title: "activity"
+output: html_document
+---
+https://rpubs.com/tmd636/102240
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r load libraries}
+library(dplyr)
+library(datasets)
+library(ggplot2)
+```
+setwd("/Users/masamiyamaguchi/Documents/GitHub/RepData_PeerAssessment1")
+## Load data as activity data frame
+```{r activity}
+
+filename <- "activity.csv"
+activity <- read.csv(filename)
+dim(activity)
+head(activity)
+summary(activity)
+```
+
+## Total number of steps taken per day
+```{r}
+
+steps_per_day <- tapply(activity$steps,activity$date, FUN=sum, rm.na = TRUE)
+
+hist(steps_per_day, main = "Total number of steps taken per day and frequency", xlab = "Total steps by day")
+
+```
+
+
+
+```{r steps}
+## Total number of steps taken per day
+
+steps_mean <- mean(steps_per_day, na.rm = TRUE)
+steps_median <- median(steps_per_day, na.rm = TRUE)
+cat("Mean of the total number of steps per day is ", steps_mean)
+cat("Median of the total number of steps per day is ", steps_median)
+```
+
+
+## What is the average daily activity pattern?
+```{r average daily activity}
+avg_steps<-with(activity,tapply(steps,interval,mean,na.rm=TRUE))
+avg_steps <- as.data.frame(avg_steps)
+
+
+library(tibble)
+avg_steps <- avg_steps %>% rownames_to_column(var = "Interval")
+plot(avg_steps$Interval, avg_steps$avg_steps, type = "l", main = "Averagy daily activity pattern")
+```
+
+
+```{r maximum number of average steps}
+rownum <- which.max(avg_steps$avg_steps)
+max <- avg_steps[rownum, "avg_steps"]
+```
+
+## Filling missing values
+```{r missing values}
+sum(is.na(activity$steps))
+```
+
+## Filling in all of the missing values
+```{r fill in missing values with an average value of 5 minutes intervals}
+#sum(is.na(activity$steps))
+```
+
+## Create a new activity dataframe with missing data filled in by mean for 5-minute interval
+```{r average steps}
+fill <- mean(avg_steps$avg_steps)
+new_activity <- activity
+count <- nrow(new_activity)
+for(i in 1:count){
+  if(is.na(new_activity$steps[i])) {
+     new_activity$steps[i] <- fill
+  }
+}
+
+```
+
+## Histogram of the totla number of steps taken each day with a new dataframe
+```{r histogram and new mean/average}
+new_steps_per_day <- tapply(new_activity$steps, new_activity$date, FUN=sum)
+
+hist(new_steps_per_day, ylab = "Number of days", col = "Blue")
+hist(steps_per_day, xlab = "Total steps by day", col = "Grey", add = T)
+legend("topright", c("Imputed Data", "Non-NA Data"), fill=c("grey", "blue") )
+
+steps_mean <- mean(new_steps_per_day, na.rm = TRUE)
+steps_median <- median(steps_per_day, na.rm = TRUE)
+print(new_steps_mean <- mean(new_steps_per_day))
+print(new_steps_median <- median(new_steps_per_day))
+```
+
+## Weekdays and weekends
+```{r Weekdays and weekends}
+new_activity$date <- as.Date(new_activity$date)
+new_activity <- mutate(new_activity, Weekdays = weekdays(new_activity$date))
+
+
+weekdays1 <- c('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday')
+new_activity$Weekdays <- c('weekend', 'weekday')[(weekdays(new_activity$date) %in% weekdays1)+1L]
+```
+
+## Plot
+```{r weekdays}
+wkdays <- filter(new_activity, Weekdays == "weekday")
+wkdays_avg_steps <- tapply(wkdays$steps, wkdays$interval, FUN=mean)
+wkdays_avg_steps <- as.data.frame(wkdays_avg_steps)
+
+
+library(tibble)
+wkdays_avg_steps <- wkdays_avg_steps %>% rownames_to_column(var = "Interval")
+#plot(wkdays_avg_steps$Interval, wkdays_avg_steps$wkdays_avg_steps, type = "l", xlab = "Intervals", ylab = "Average Steps",main = "Weekdays")
+wkdays_avg_steps <- mutate(wkdays_avg_steps, Week = "weekdays")
+
+```
+
+```{r weekends}
+wkends <- filter(new_activity, Weekdays == "weekend")
+wkends_avg_steps <- tapply(wkends$steps, wkends$interval, FUN=mean)
+wkends_avg_steps <- as.data.frame(wkends_avg_steps)
+
+
+library(tibble)
+wkends_avg_steps <- wkends_avg_steps %>% rownames_to_column(var = "Interval")
+#plot(wkends_avg_steps$Interval, wkends_avg_steps$wkends_avg_steps, type = "l", xlab = "Intervals", ylab = "Average Steps",main = "Weekend")
+wkends_avg_steps <- mutate(wkends_avg_steps, Week = "weekend")
+
+colnames(wkdays_avg_steps) <- colnames(wkends_avg_steps) <- c("Interval", "Average_steps", "Week")
+week_average <- rbind(wkdays_avg_steps, wkends_avg_steps)
+
+week_average$Interval <- as.numeric(week_average$Interval)
+week_average$Average_steps <- as.integer(week_average$Average_steps)
+
+library(lattice)
+xyplot(Average_steps~Interval|Week, type="l", data=week_average, layout = c(1,2), main = "Average steps per interval by day type")
+
+```
+
