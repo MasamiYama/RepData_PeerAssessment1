@@ -5,10 +5,6 @@ output:
     keep_md: true
 ---
 
-```r
-knitr::opts_chunk$set(fig.path='figure/')
-```
-
 ## Loading and preprocessing the data
 
 ```r
@@ -81,10 +77,10 @@ summary(activity)
 ```r
 steps_per_day <- tapply(activity$steps,activity$date, FUN=sum, rm.na = TRUE)
 
-hist(steps_per_day, main = "Total number of steps taken per day and frequency", xlab = "Total_steps_by_day")
+hist(steps_per_day, main = "Total number of steps taken per day and frequency", xlab = "Total steps by day")
 ```
 
-![](figure/mean total and histogram-1.png)<!-- -->
+![](PA1_template_files/figure-html/mean_total_and_histogram-1.png)<!-- -->
 
 ```r
 steps_mean <- mean(steps_per_day, na.rm = TRUE)
@@ -110,12 +106,11 @@ cat("Median of the total number of steps per day is ", steps_median)
 avg_steps<-with(activity,tapply(steps,interval,mean,na.rm=TRUE))
 avg_steps <- as.data.frame(avg_steps)
 
-
 avg_steps <- avg_steps %>% rownames_to_column(var = "Interval")
-plot(avg_steps$Interval, avg_steps$avg_steps, type = "l", main = "Average_daily_activity_pattern")
+plot(avg_steps$Interval, avg_steps$avg_steps, type = "l", main = "Average daily activity pattern")
 ```
 
-![](figure/average daily activity-1.png)<!-- -->
+![](PA1_template_files/figure-html/average_daily_activity-1.png)<!-- -->
 
 
 ## Imputing missing values
@@ -150,11 +145,9 @@ hist(steps_per_day, xlab = "Total steps by day", col = "Grey", add = T)
 legend("topright", c("Imputed Data", "Non-NA Data"), fill=c("grey", "blue") )
 ```
 
-![](figure/histogram and new mean/average-1.png)<!-- -->
+![](PA1_template_files/figure-html/histogram_and_new_mean_and_average-1.png)<!-- -->
 
 ```r
-#main("Comparison_between_NA_filled_and_NA_Non_filled")
-
 steps_mean <- mean(new_steps_per_day, na.rm = TRUE)
 steps_median <- median(steps_per_day, na.rm = TRUE)
 cat("Mean of the total number of steps per day after filling NA with an average number of steps is ", steps_mean)
@@ -210,12 +203,14 @@ week_average$Interval <- as.numeric(week_average$Interval)
 week_average$Average_steps <- as.integer(week_average$Average_steps)
 ```
 
+
 ```r
-xyplot(Average_steps~Interval|Week, type="l", data=week_average, layout = c(1,2), main = "Average_steps_per_interval_by_day_type")
+xyplot(Average_steps~Interval|Week, type="l", data=week_average, layout = c(1,2), main = "Average steps per interval by day type")
 ```
 
-![](figure/week comparison plots-1.png)<!-- -->
-install.packages(“knitr”)
-library(“knitr”)
-knit2html("/Users/masamiyamaguchi/Documents/GitHub/RepData_PeerAssessment1/PA1_template.Rmd", spin(knit = FALSE), force_v1 = TRUE)
+![](PA1_template_files/figure-html/week_comparison_plots-1.png)<!-- -->
 
+
+Install.packages(“knitr”)
+Library(“knitr”)
+knit2html("/Users/masamiyamaguchi/Documents/GitHub/RepData_PeerAssessment1/PA1_template.Rmd", spin(knit = FALSE), force_v1 = TRUE)
